@@ -1,0 +1,11 @@
+# Jetbrains
+.idea
+
+# Python
+__pycache__
+
+# MAC OS
+.DS_Store
+
+# Data folder
+data

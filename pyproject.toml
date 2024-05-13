@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "gaia-classifier"
+version = "0.1.0"
+description = ""
+authors = ["Nicolas Huber <nicolas.huber2@uzh.ch>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+scikit-learn = "^1.4.2"
+numpy = "^1.26.4"
+pandas = "^2.2.2"
+seaborn = "^0.13.2"
+jupyter = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
