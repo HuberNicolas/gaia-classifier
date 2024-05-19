@@ -1,3 +1,4 @@
+import json
 from pprint import pprint
 
 import numpy as np
@@ -6,7 +7,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split, cross_validate
@@ -26,7 +27,6 @@ df_train = pd.read_csv(f"{DataConfig.data_path}/{DataConfig.training_data_filena
 if Settings.dev:
     df_train = df_train.sample(frac=Settings.sample_size)
 
-
 kf = StratifiedKFold(n_splits=Settings.stratified_k_fold_n_splits, shuffle=True, random_state=Settings.random_state)
 
 scoring = {
@@ -41,7 +41,8 @@ X = df_train.drop(columns=[ModelConfig.target_column])
 y = df_train[ModelConfig.target_column].str.strip()
 
 # Split the data into training and validation sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ModelConfig.test_size, random_state=Settings.random_state)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ModelConfig.test_size,
+                                                    random_state=Settings.random_state)
 
 # Encode the target
 label_encoder = LabelEncoder()
@@ -106,8 +107,66 @@ grid_search = GridSearchCV(pipeline, param_grid, cv=kf, scoring='accuracy', verb
 # Fit GridSearchCV
 grid_search.fit(X_train, y_train_encoded)
 
+# Define the filename for the logfile
+logfile_path = 'grid_search_results.log'
+
+# Use best model and parameters to calculate confusion matrix
+best_model = grid_search.best_estimator_
+y_pred = best_model.predict(X_test)
+cm = confusion_matrix(y_test_encoded, y_pred)
+
+# Dictionary to hold the best configuration for each classifier type
+with open(logfile_path, 'w') as logfile:
+    # Write a header for the log file
+    logfile.write("Model and Parameters - Scores\n")
+    logfile.write("-" * 50 + "\n")
+
+    #  Write confusion matrix
+    logfile.write(f"Confusion Matrix:\n{cm}\n")
+    logfile.write("-" * 50 + "\n")
+
+    # Iterate over each set of parameters and corresponding results
+    for i in range(len(grid_search.cv_results_['params'])):
+        # Extract the parameters and scores
+        params = grid_search.cv_results_['params'][i]
+        mean_test_score = grid_search.cv_results_['mean_test_score'][i]
+        std_test_score = grid_search.cv_results_['std_test_score'][i]
+
+        # Create a log entry for this parameter set
+        model_details = f"Model: {params['classifier'].__class__.__name__}, Params: {params}, "
+        scores_details = f"Mean Score: {mean_test_score:.3f}, Std Dev: {std_test_score:.3f}\n"
+
+        # Write the combined details to the log file
+        logfile.write(model_details + scores_details)
+print(f"GridSearchCV results have been saved to {logfile_path}")
+
+# Analyze the results to find the best configuration per model type
+best_configs = {}
+for i in range(len(grid_search.cv_results_['params'])):
+    model_type = grid_search.cv_results_['params'][i]['classifier'].__class__.__name__
+    model_score = grid_search.cv_results_['mean_test_score'][i]
+
+    if model_type not in best_configs or model_score > best_configs[model_type]['score']:
+        best_configs[model_type] = {
+            'params': grid_search.cv_results_['params'][i],
+            'score': model_score
+        }
+
+# File to save the best configurations
+best_configs_file = 'best_configurations_per_model.log'
+
+# Write best configurations to the file
+with open(best_configs_file, 'w') as f:
+    for model, config in best_configs.items():
+        f.write(f"Best configuration for {model}:\n")
+        f.write(f"Parameters: {config['params']}\n")
+        f.write(f"Score: {config['score']:.3f}\n")
+        f.write("-" * 50 + "\n")
+
+print(f"Best configurations have been saved to {best_configs_file}")
+
 # Best parameters and score
-print("Best parameters:", grid_search.best_params_)
+print("Best parameters overall:", grid_search.best_params_)
 print("Best cross-validation score: {:.2f}".format(grid_search.best_score_))
 
 # Test accuracy
@@ -118,6 +177,9 @@ best_pipeline = grid_search.best_estimator_
 results = cross_validate(best_pipeline, X, y, cv=kf, scoring=scoring)
 # Evaluate the model (optional, if you want to see how it performs on unseen data)
 pprint(results)
+
+
+
 
 # Read the unknown (test) data
 df_unknown = pd.read_csv(f"{DataConfig.data_path}/{DataConfig.submission_data_filename}")

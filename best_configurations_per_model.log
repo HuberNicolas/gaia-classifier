@@ -1,0 +1,38 @@
+Best configuration for DecisionTreeClassifier:
+Parameters: {'classifier': DecisionTreeClassifier(random_state=31011997), 'classifier__max_depth': None, 'classifier__min_samples_leaf': 1, 'classifier__min_samples_split': 2}
+Score: 1.000
+--------------------------------------------------
+Best configuration for LogisticRegression:
+Parameters: {'classifier': LogisticRegression(random_state=31011997), 'classifier__C': 10, 'classifier__solver': 'liblinear'}
+Score: 1.000
+--------------------------------------------------
+Best configuration for RandomForestClassifier:
+Parameters: {'classifier': RandomForestClassifier(random_state=31011997), 'classifier__max_features': 'auto', 'classifier__n_estimators': 100}
+Score: nan
+--------------------------------------------------
+Best configuration for KNeighborsClassifier:
+Parameters: {'classifier': KNeighborsClassifier(), 'classifier__n_neighbors': 3, 'classifier__weights': 'uniform'}
+Score: 0.983
+--------------------------------------------------
+Best configuration for SVC:
+Parameters: {'classifier': SVC(random_state=31011997), 'classifier__C': 1, 'classifier__kernel': 'linear'}
+Score: 1.000
+--------------------------------------------------
+Best configuration for MLPClassifier:
+Parameters: {'classifier': MLPClassifier(random_state=31011997), 'classifier__activation': 'tanh', 'classifier__hidden_layer_sizes': (100,), 'classifier__learning_rate_init': 0.01}
+Score: 0.992
+--------------------------------------------------
+Best configuration for XGBClassifier:
+Parameters: {'classifier': XGBClassifier(base_score=None, booster=None, callbacks=None,
+              colsample_bylevel=None, colsample_bynode=None,
+              colsample_bytree=None, device=None, early_stopping_rounds=None,
+              enable_categorical=False, eval_metric=None, feature_types=None,
+              gamma=None, grow_policy=None, importance_type=None,
+              interaction_constraints=None, learning_rate=None, max_bin=None,
+              max_cat_threshold=None, max_cat_to_onehot=None,
+              max_delta_step=None, max_depth=None, max_leaves=None,
+              min_child_weight=None, missing=nan, monotone_constraints=None,
+              multi_strategy=None, n_estimators=None, n_jobs=None,
+              num_parallel_tree=None, random_state=31011997, ...), 'classifier__colsample_bytree': 0.7, 'classifier__learning_rate': 0.01, 'classifier__max_depth': 3, 'classifier__n_estimators': 100, 'classifier__subsample': 0.7}
+Score: 0.992
+--------------------------------------------------
