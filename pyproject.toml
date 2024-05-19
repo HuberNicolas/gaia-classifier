@@ -12,7 +12,6 @@ numpy = "^1.26.4"
 pandas = "^2.2.2"
 seaborn = "^0.13.2"
 jupyter = "^1.0.0"
-sns = "^0.1"
 
 
 [build-system]
