@@ -14,4 +14,4 @@ class Settings:
 class ModelConfig:
     target_column = 'SpType-ELS'
     test_size = 0.2
-    columns_to_drop = ['Unnamed: 0', 'Source']
+    columns_to_drop = ['ID', 'Unnamed: 0', 'Source']
