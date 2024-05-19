@@ -1,44 +1,51 @@
-import json
+from itertools import cycle
 from pprint import pprint
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
+from joblib import dump
+from matplotlib import pyplot as plt
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, BaggingClassifier, AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, \
+    roc_curve, auc
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import LabelEncoder, label_binarize, StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
-from config import DataConfig, ModelConfig, Settings
+from config import DataConfig, EvaluationConfig, ModelConfig, Settings
 
 # Read the training data
 df_train = pd.read_csv(f"{DataConfig.data_path}/{DataConfig.training_data_filename}")
 
+# Speed up during development
 if Settings.dev:
     df_train = df_train.sample(frac=Settings.sample_size)
 
 kf = StratifiedKFold(n_splits=Settings.stratified_k_fold_n_splits, shuffle=True, random_state=Settings.random_state)
 
+# Separate features and target
+X = df_train.drop(columns=[ModelConfig.target_column])
+y = df_train[ModelConfig.target_column].str.strip()
+
+# Define Scoring Metrics
 scoring = {
     'accuracy': make_scorer(accuracy_score),
     'precision': make_scorer(precision_score, average='weighted'),
     'recall': make_scorer(recall_score, average='weighted'),
-    'f1_score': make_scorer(f1_score, average='macro')
+    'f1_score': make_scorer(f1_score, average='macro'),
+    'roc_auc': 'roc_auc_ovr' if len(np.unique(y)) > 2 else 'roc_auc'  # Handle binary and multi-class
 }
-
-# Separate features and target
-X = df_train.drop(columns=[ModelConfig.target_column])
-y = df_train[ModelConfig.target_column].str.strip()
 
 # Split the data into training and validation sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ModelConfig.test_size,
@@ -98,25 +105,64 @@ param_grid = [
      'classifier__max_depth': [3, 6, 9],
      'classifier__learning_rate': [0.01, 0.1, 0.3],
      'classifier__subsample': [0.7, 0.9, 1],
-     'classifier__colsample_bytree': [0.7, 0.9, 1]}
+     'classifier__colsample_bytree': [0.7, 0.9, 1]},
+]
+
+# Add Bagging and Boosting methods
+param_grid += [
+    {'classifier': [BaggingClassifier(estimator=DecisionTreeClassifier(random_state=Settings.random_state), random_state=Settings.random_state)],
+     'classifier__n_estimators': [10, 50, 100],
+     'classifier__max_samples': [0.5, 1.0],
+     'classifier__max_features': [0.5, 1.0]},
+    {'classifier': [AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1, random_state=Settings.random_state), random_state=Settings.random_state)],
+     'classifier__n_estimators': [50, 100, 200],
+     'classifier__learning_rate': [0.01, 0.1, 1]},
+    {'classifier': [GradientBoostingClassifier(random_state=Settings.random_state)],
+     'classifier__n_estimators': [100, 200, 300],
+     'classifier__learning_rate': [0.01, 0.1, 0.2],
+     'classifier__max_depth': [3, 5, 7]}
 ]
 
 # Create the GridSearchCV object
-grid_search = GridSearchCV(pipeline, param_grid, cv=kf, scoring='accuracy', verbose=3, n_jobs=-1)
+grid_search = GridSearchCV(pipeline, param_grid, cv=kf, scoring='accuracy', verbose=3, n_jobs=-1) # verbose=3 to have detailed output
 
 # Fit GridSearchCV
 grid_search.fit(X_train, y_train_encoded)
 
-# Define the filename for the logfile
-logfile_path = 'grid_search_results.log'
+# Use the best estimator for predictions
+best_pipeline = grid_search.best_estimator_
+results = cross_validate(best_pipeline, X, y, cv=kf, scoring=scoring)
+# Evaluate the model (how it performs on unseen data)
+pprint(results)
 
 # Use best model and parameters to calculate confusion matrix
-best_model = grid_search.best_estimator_
-y_pred = best_model.predict(X_test)
+y_pred = best_pipeline.predict(X_test) # best_model = grid_search.best_estimator_
 cm = confusion_matrix(y_test_encoded, y_pred)
 
+
+# Set up the matplotlib figure
+plt.figure(figsize=(8, 6))
+
+# Draw the heatmap with the mask and correct aspect ratio
+sns.heatmap(cm, annot=True, fmt="d", cmap='Blues', cbar=False, square=True,
+            annot_kws={"size": 16})  # 'fmt' specifies numeric formatting to integers
+
+# Labels, title, and ticks
+plt.title('Confusion Matrix')
+plt.ylabel('True label')
+plt.xlabel('Predicted label')
+class_labels = label_encoder.classes_
+plt.xticks(np.arange(len(class_labels)) + 0.5, class_labels, rotation=45)
+plt.yticks(np.arange(len(class_labels)) + 0.5, class_labels, rotation=0)
+plt.savefig(EvaluationConfig.heatmap_plot_path)
+print(f"Heat map plot saved as '{EvaluationConfig.heatmap_plot_path}'.")
+
+# Save pipeline
+dump(best_pipeline, EvaluationConfig.pipeline_path)
+print(f"Pipeline hase been saved to {EvaluationConfig.pipeline_path}")
+
 # Dictionary to hold the best configuration for each classifier type
-with open(logfile_path, 'w') as logfile:
+with open(EvaluationConfig.logfile_path, 'w') as logfile:
     # Write a header for the log file
     logfile.write("Model and Parameters - Scores\n")
     logfile.write("-" * 50 + "\n")
@@ -138,7 +184,7 @@ with open(logfile_path, 'w') as logfile:
 
         # Write the combined details to the log file
         logfile.write(model_details + scores_details)
-print(f"GridSearchCV results have been saved to {logfile_path}")
+print(f"GridSearchCV results have been saved to {EvaluationConfig.logfile_path}")
 
 # Analyze the results to find the best configuration per model type
 best_configs = {}
@@ -152,18 +198,16 @@ for i in range(len(grid_search.cv_results_['params'])):
             'score': model_score
         }
 
-# File to save the best configurations
-best_configs_file = 'best_configurations_per_model.log'
 
-# Write best configurations to the file
-with open(best_configs_file, 'w') as f:
+# Write the best configurations to the file
+with open(EvaluationConfig.best_configs_file, 'w') as f:
     for model, config in best_configs.items():
         f.write(f"Best configuration for {model}:\n")
         f.write(f"Parameters: {config['params']}\n")
         f.write(f"Score: {config['score']:.3f}\n")
         f.write("-" * 50 + "\n")
 
-print(f"Best configurations have been saved to {best_configs_file}")
+print(f"Best configurations have been saved to {EvaluationConfig.best_configs_file}")
 
 # Best parameters and score
 print("Best parameters overall:", grid_search.best_params_)
@@ -172,12 +216,40 @@ print("Best cross-validation score: {:.2f}".format(grid_search.best_score_))
 # Test accuracy
 print("Test set score: {:.2f}".format(grid_search.score(X_test, y_test_encoded)))
 
-# Use the best estimator for predictions
-best_pipeline = grid_search.best_estimator_
-results = cross_validate(best_pipeline, X, y, cv=kf, scoring=scoring)
-# Evaluate the model (optional, if you want to see how it performs on unseen data)
-pprint(results)
 
+# Prepare to plot ROC curves
+y_prob = best_pipeline.predict_proba(X_test)
+if len(np.unique(y)) > 2:  # Multi-class case
+    # We don't need this case.
+    y_test_binarized = label_binarize(y_test, classes=np.unique(y))
+    n_classes = y_test_binarized.shape[1]
+    # Compute ROC curve and ROC area for each class
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    colors = cycle(['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black'])
+    for i in range(n_classes):
+        fpr[i], tpr[i], _ = roc_curve(y_test_binarized[:, i], y_prob[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+        # Plot ROC curve
+        plt.plot(fpr[i], tpr[i], color=next(colors), lw=2,
+                 label='ROC curve of class {0} (area = {1:0.2f})'.format(i, roc_auc[i]))
+else:  # Binary case
+    fpr, tpr, _ = roc_curve(y_test_encoded, y_prob[:, 1])
+    roc_auc = auc(fpr, tpr)
+    plt.plot(fpr, tpr, color='darkorange', lw=2,
+             label='ROC curve (area = {0:0.2f})'.format(roc_auc))
+
+# Plotting the diagonal line
+plt.plot([0, 1], [0, 1], 'k--', lw=2)
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver operating characteristic')
+plt.legend(loc="lower right")
+plt.savefig(EvaluationConfig.ROC_plot_path)
+print(f"ROC curves plot saved as '{EvaluationConfig.ROC_plot_path}'.")
 
 
 
@@ -193,7 +265,7 @@ y_unknown_pred_formatted = [f"{label}      " for label in y_unknown_pred]  # Add
 
 # Create submission DataFrame
 submission_df = pd.DataFrame({
-    'ID': df_unknown['ID'],  # Assuming there is an 'ID' column in the test dataset
+    'ID': df_unknown['ID'],
     'SpType-ELS': y_unknown_pred_formatted
 })
 

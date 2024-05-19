@@ -3,7 +3,7 @@ Parameters: {'classifier': DecisionTreeClassifier(random_state=31011997), 'class
 Score: 1.000
 --------------------------------------------------
 Best configuration for LogisticRegression:
-Parameters: {'classifier': LogisticRegression(random_state=31011997), 'classifier__C': 10, 'classifier__solver': 'liblinear'}
+Parameters: {'classifier': LogisticRegression(random_state=31011997), 'classifier__C': 100, 'classifier__solver': 'liblinear'}
 Score: 1.000
 --------------------------------------------------
 Best configuration for RandomForestClassifier:
@@ -11,16 +11,16 @@ Parameters: {'classifier': RandomForestClassifier(random_state=31011997), 'class
 Score: nan
 --------------------------------------------------
 Best configuration for KNeighborsClassifier:
-Parameters: {'classifier': KNeighborsClassifier(), 'classifier__n_neighbors': 3, 'classifier__weights': 'uniform'}
-Score: 0.983
+Parameters: {'classifier': KNeighborsClassifier(), 'classifier__n_neighbors': 3, 'classifier__weights': 'distance'}
+Score: 0.999
 --------------------------------------------------
 Best configuration for SVC:
 Parameters: {'classifier': SVC(random_state=31011997), 'classifier__C': 1, 'classifier__kernel': 'linear'}
 Score: 1.000
 --------------------------------------------------
 Best configuration for MLPClassifier:
-Parameters: {'classifier': MLPClassifier(random_state=31011997), 'classifier__activation': 'tanh', 'classifier__hidden_layer_sizes': (100,), 'classifier__learning_rate_init': 0.01}
-Score: 0.992
+Parameters: {'classifier': MLPClassifier(random_state=31011997), 'classifier__activation': 'tanh', 'classifier__hidden_layer_sizes': (50,), 'classifier__learning_rate_init': 0.001}
+Score: 1.000
 --------------------------------------------------
 Best configuration for XGBClassifier:
 Parameters: {'classifier': XGBClassifier(base_score=None, booster=None, callbacks=None,
@@ -34,5 +34,20 @@ Parameters: {'classifier': XGBClassifier(base_score=None, booster=None, callback
               min_child_weight=None, missing=nan, monotone_constraints=None,
               multi_strategy=None, n_estimators=None, n_jobs=None,
               num_parallel_tree=None, random_state=31011997, ...), 'classifier__colsample_bytree': 0.7, 'classifier__learning_rate': 0.01, 'classifier__max_depth': 3, 'classifier__n_estimators': 100, 'classifier__subsample': 0.7}
-Score: 0.992
+Score: 1.000
+--------------------------------------------------
+Best configuration for BaggingClassifier:
+Parameters: {'classifier': BaggingClassifier(estimator=DecisionTreeClassifier(random_state=31011997),
+                  random_state=31011997), 'classifier__max_features': 0.5, 'classifier__max_samples': 0.5, 'classifier__n_estimators': 10}
+Score: 1.000
+--------------------------------------------------
+Best configuration for AdaBoostClassifier:
+Parameters: {'classifier': AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1,
+                                                    random_state=31011997),
+                   random_state=31011997), 'classifier__learning_rate': 0.01, 'classifier__n_estimators': 50}
+Score: 1.000
+--------------------------------------------------
+Best configuration for GradientBoostingClassifier:
+Parameters: {'classifier': GradientBoostingClassifier(random_state=31011997), 'classifier__learning_rate': 0.01, 'classifier__max_depth': 3, 'classifier__n_estimators': 100}
+Score: 1.000
 --------------------------------------------------
