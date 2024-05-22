@@ -59,3 +59,7 @@ class ImportanceConfig:
     importance_thresholds = [1.0, 0.99, 0.98, 0.96, 0.95, 0.90, 0.80, 0.50, 0.20]
     importance_plot_path = './importance/importance.png'
     importance_accumulated_path = './importance/importance_acc.png'
+
+class FeatureSelectionConfig:
+    selection_type = 'LEAST'  # 'BEST' or 'LEAST'
+    num_features = 1

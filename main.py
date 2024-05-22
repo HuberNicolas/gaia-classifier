@@ -19,11 +19,46 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, label_binarize, StandardScaler
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
-from config import DataConfig, EvaluationConfig, ModelConfig, Settings
+from config import DataConfig, EvaluationConfig, ModelConfig, Settings, FeatureSelectionConfig
+
+
+class FeatureSelector:
+    def __init__(self, selection_type, num_features):
+        self.selected_features = None
+        self.selection_type = selection_type
+        self.num_features = num_features
+        self.mask = None
+
+    def fit(self, X, y):
+        linear_svc = LinearSVC(penalty="l1", dual=False, random_state=Settings.random_state)
+        linear_svc.fit(X, y)
+        coef_abs = np.abs(linear_svc.coef_).flatten()
+        if self.selection_type == 'BEST':
+            selected_indices = np.argsort(coef_abs)[-self.num_features:]
+        elif self.selection_type == 'LEAST':
+            selected_indices = np.argsort(coef_abs)[:self.num_features]
+        else:
+            raise ValueError("selection_type should be 'BEST' or 'LEAST'")
+        self.mask = np.zeros_like(coef_abs, dtype=bool)
+        self.mask[selected_indices] = True
+
+        # Handle both DataFrame and NumPy array
+        if isinstance(X, pd.DataFrame):
+            self.selected_features = X.columns[selected_indices]
+        else:
+            self.selected_features = selected_indices
+
+        return self
+
+    def transform(self, X):
+        return X[:, self.mask]
+
+    def get_selected_features(self):
+        return self.selected_features
 
 # Read the training data
 df_train = pd.read_csv(f"{DataConfig.data_path}/{DataConfig.training_data_filename}")
@@ -75,6 +110,7 @@ preprocessor = ColumnTransformer(
 # Creating the full pipeline
 pipeline = Pipeline([
     ('preprocessor', preprocessor),
+    ('feature_selection', FeatureSelector(FeatureSelectionConfig.selection_type, FeatureSelectionConfig.num_features)),
     ('classifier', None)
 ])
 
@@ -123,11 +159,22 @@ param_grid += [
      'classifier__max_depth': [3, 5, 7]}
 ]
 
+param_grid = [
+    {'classifier': [DecisionTreeClassifier(random_state=Settings.random_state)],
+     'classifier__max_depth': [None, 10, 20, 30],
+     'classifier__min_samples_split': [2, 10, 20],
+     'classifier__min_samples_leaf': [1, 5, 10]},
+]
+
 # Create the GridSearchCV object
 grid_search = GridSearchCV(pipeline, param_grid, cv=kf, scoring='accuracy', verbose=3, n_jobs=-1) # verbose=3 to have detailed output
 
 # Fit GridSearchCV
 grid_search.fit(X_train, y_train_encoded)
+
+# Print selected features
+selected_features = grid_search.best_estimator_.named_steps['feature_selection'].get_selected_features()
+print("Selected features:", selected_features)
 
 # Use the best estimator for predictions
 best_pipeline = grid_search.best_estimator_
