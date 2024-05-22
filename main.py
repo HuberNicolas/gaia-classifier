@@ -28,37 +28,42 @@ from config import DataConfig, EvaluationConfig, ModelConfig, Settings, FeatureS
 
 class FeatureSelector:
     def __init__(self, selection_type, num_features):
-        self.selected_features = None
         self.selection_type = selection_type
         self.num_features = num_features
         self.mask = None
+        self.selected_indices = None
+        self.original_feature_names = None
 
     def fit(self, X, y):
+        # Store the original feature names
+        if isinstance(X, pd.DataFrame):
+            self.original_feature_names = X.columns
+        else:
+            self.original_feature_names = np.arange(X.shape[1])
+
         linear_svc = LinearSVC(penalty="l1", dual=False, random_state=Settings.random_state)
         linear_svc.fit(X, y)
         coef_abs = np.abs(linear_svc.coef_).flatten()
         if self.selection_type == 'BEST':
-            selected_indices = np.argsort(coef_abs)[-self.num_features:]
+            self.selected_indices = np.argsort(coef_abs)[-self.num_features:]
         elif self.selection_type == 'LEAST':
-            selected_indices = np.argsort(coef_abs)[:self.num_features]
+            self.selected_indices = np.argsort(coef_abs)[:self.num_features]
         else:
             raise ValueError("selection_type should be 'BEST' or 'LEAST'")
+
         self.mask = np.zeros_like(coef_abs, dtype=bool)
-        self.mask[selected_indices] = True
-
-        # Handle both DataFrame and NumPy array
-        if isinstance(X, pd.DataFrame):
-            self.selected_features = X.columns[selected_indices]
-        else:
-            self.selected_features = selected_indices
-
+        self.mask[self.selected_indices] = True
         return self
 
     def transform(self, X):
         return X[:, self.mask]
 
     def get_selected_features(self):
-        return self.selected_features
+        selected_feature_names = self.original_feature_names[self.selected_indices]
+        return selected_feature_names
+
+    def get_feature_names(self):
+        return self.original_feature_names
 
 # Read the training data
 df_train = pd.read_csv(f"{DataConfig.data_path}/{DataConfig.training_data_filename}")
@@ -102,7 +107,7 @@ numerical_pipeline = Pipeline([
 preprocessor = ColumnTransformer(
     transformers=[
         ('num', numerical_pipeline, numerical_features),
-        ('drop', 'drop', ModelConfig.columns_to_drop)  # Explicitly dropping columns
+        #('drop', 'drop', ModelConfig.columns_to_drop)  # Explicitly dropping columns
     ],
     remainder='passthrough'  # Include other columns as is
 )
@@ -175,6 +180,7 @@ grid_search.fit(X_train, y_train_encoded)
 # Print selected features
 selected_features = grid_search.best_estimator_.named_steps['feature_selection'].get_selected_features()
 print("Selected features:", selected_features)
+print( grid_search.best_estimator_.named_steps['feature_selection'].get_feature_names())
 
 # Use the best estimator for predictions
 best_pipeline = grid_search.best_estimator_

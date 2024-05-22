@@ -15,7 +15,7 @@ class EvaluationConfig:
 class Settings:
     dev = False
     sample_size = 0.001
-    stratified_k_fold_n_splits = 10
+    stratified_k_fold_n_splits = 2
     random_state = 31011997
 
 
