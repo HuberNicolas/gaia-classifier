@@ -61,5 +61,5 @@ class ImportanceConfig:
     importance_accumulated_path = './importance/importance_acc.png'
 
 class FeatureSelectionConfig:
-    selection_type = 'LEAST'  # 'BEST' or 'LEAST'
+    selection_type = 'BEST'  # 'BEST' or 'LEAST'
     num_features = 1
