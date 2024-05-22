@@ -1,4 +1,0 @@
-Best configuration for DecisionTreeClassifier:
-Parameters: {'classifier': DecisionTreeClassifier(random_state=31011997), 'classifier__max_depth': 10, 'classifier__min_samples_leaf': 10, 'classifier__min_samples_split': 2}
-Score: 0.978
---------------------------------------------------

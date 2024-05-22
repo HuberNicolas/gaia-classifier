@@ -28,11 +28,52 @@ from xgboost import XGBClassifier
 from config import DataConfig, EvaluationConfig, ModelConfig, Settings, FeatureSelectionConfig
 
 param_grid = [
-        {'classifier': [DecisionTreeClassifier(random_state=Settings.random_state)],
-         'classifier__max_depth': [None, 10, 20, 30],
-         'classifier__min_samples_split': [2, 10, 20],
-         'classifier__min_samples_leaf': [1, 5, 10]},
-    ]
+    {'classifier': [DecisionTreeClassifier(random_state=Settings.random_state)],
+     'classifier__max_depth': [None, 10, 20, 30],
+     'classifier__min_samples_split': [2, 10, 20],
+     'classifier__min_samples_leaf': [1, 5, 10]},
+    {'classifier': [LogisticRegression(random_state=Settings.random_state)],
+     'classifier__C': [0.1, 1.0, 10, 100],
+     'classifier__solver': ['liblinear', 'lbfgs']},
+    {'classifier': [RandomForestClassifier(random_state=Settings.random_state)],
+     'classifier__n_estimators': [100, 200, 300],
+     'classifier__max_features': ['auto', 'sqrt', 'log2']},
+    {'classifier': [KNeighborsClassifier()],
+     'classifier__n_neighbors': [3, 5, 7],
+     'classifier__weights': ['uniform', 'distance']},
+    {'classifier': [SVC(random_state=Settings.random_state)],
+     'classifier__C': [1, 10, 100],
+     'classifier__kernel': ['linear', 'rbf']},
+    {'classifier': [MLPClassifier(random_state=Settings.random_state)],
+     'classifier__hidden_layer_sizes': [(50,), (100,), (50, 50)],
+     'classifier__activation': ['tanh', 'relu'],
+     'classifier__learning_rate_init': [0.001, 0.01]},
+    {'classifier': [XGBClassifier(random_state=Settings.random_state, use_label_encoder=False)],
+     'classifier__n_estimators': [100, 200, 300],
+     'classifier__max_depth': [3, 6, 9],
+     'classifier__learning_rate': [0.01, 0.1, 0.3],
+     'classifier__subsample': [0.7, 0.9, 1],
+     'classifier__colsample_bytree': [0.7, 0.9, 1]},
+]
+
+# Add Bagging and Boosting methods
+param_grid += [
+    {'classifier': [BaggingClassifier(estimator=DecisionTreeClassifier(random_state=Settings.random_state),
+                                      random_state=Settings.random_state)],
+     'classifier__n_estimators': [10, 50, 100],
+     'classifier__max_samples': [0.5, 1.0],
+     'classifier__max_features': [0.5, 1.0]},
+    {'classifier': [
+        AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1, random_state=Settings.random_state),
+                           random_state=Settings.random_state)],
+     'classifier__n_estimators': [50, 100, 200],
+     'classifier__learning_rate': [0.01, 0.1, 1]},
+    {'classifier': [GradientBoostingClassifier(random_state=Settings.random_state)],
+     'classifier__n_estimators': [100, 200, 300],
+     'classifier__learning_rate': [0.01, 0.1, 0.2],
+     'classifier__max_depth': [3, 5, 7]}
+]
+
 # Ensure the directory exists
 def ensure_dir(file_path):
     directory = os.path.dirname(file_path)

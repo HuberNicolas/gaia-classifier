@@ -30,7 +30,7 @@ class ModelConfig:
     columns_to_keep = ['Teff', 'GRVSmag', 'DE_ICRS']
     configs = [
         {
-            'config_nr': 0, 'importance': 0.9999999999999999,
+            'config_nr': 'evaluation/e_0_25f', 'importance': 0.9999999999999999,
             'features': [
                  'RA_ICRS', 'DE_ICRS', 'Plx', 'PM', 'pmRA', 'pmDE', 'Gmag',
                  'e_Gmag', 'BPmag', 'e_BPmag', 'RPmag','e_RPmag', 'GRVSmag', 'e_GRVSmag',
@@ -39,19 +39,19 @@ class ModelConfig:
             ]
         },
         {
-            'config_nr': 1, 'importance': 0.9890979380932652,
+            'config_nr': 'evaluation/e_1_5f', 'importance': 0.9890979380932652,
             'features': ['Teff', 'GRVSmag', 'DE_ICRS', 'RA_ICRS', 'Dist']
         },
         {
-            'config_nr': 2, 'importance': 0.9768696202186886,
+            'config_nr': 'evaluation/e_2_3f', 'importance': 0.9768696202186886,
             'features': ['Teff', 'GRVSmag', 'DE_ICRS']
         },
         {
-            'config_nr': 3, 'importance': 0.9350919650871045,
+            'config_nr': 'evaluation/e_4_1f', 'importance': 0.9350919650871045,
             'features': ['Teff']
         },
         {
-            'config_nr': 4, 'importance': 0.031499201614265684,
+            'config_nr': 'evaluation/e_5_1f', 'importance': 0.031499201614265684,
             'features': ['GRVSmag']
         },
     ]
