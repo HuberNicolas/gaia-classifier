@@ -1,7 +1,6 @@
+import os
 from itertools import cycle
 from pprint import pprint
-import sys
-import os
 
 import numpy as np
 import pandas as pd
@@ -21,11 +20,11 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, label_binarize, StandardScaler
-from sklearn.svm import SVC, LinearSVC
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
-from config import DataConfig, EvaluationConfig, ModelConfig, Settings, FeatureSelectionConfig
+from config import DataConfig, EvaluationConfig, ModelConfig, Settings
 
 param_grid = [
     {'classifier': [DecisionTreeClassifier(random_state=Settings.random_state)],
@@ -33,27 +32,27 @@ param_grid = [
      'classifier__min_samples_split': [2, 10, 20],
      'classifier__min_samples_leaf': [1, 5, 10]},
     {'classifier': [LogisticRegression(random_state=Settings.random_state)],
-     'classifier__C': [0.1, 1.0, 10, 100],
+     'classifier__C': [0.1, 1.0, 10],
      'classifier__solver': ['liblinear', 'lbfgs']},
     {'classifier': [RandomForestClassifier(random_state=Settings.random_state)],
-     'classifier__n_estimators': [100, 200, 300],
-     'classifier__max_features': ['auto', 'sqrt', 'log2']},
+     'classifier__n_estimators': [200, 300],
+     'classifier__max_features': ['sqrt', 'log2']},
     {'classifier': [KNeighborsClassifier()],
-     'classifier__n_neighbors': [3, 5, 7],
+     'classifier__n_neighbors': [1, 3, 5],
      'classifier__weights': ['uniform', 'distance']},
-    {'classifier': [SVC(random_state=Settings.random_state)],
-     'classifier__C': [1, 10, 100],
-     'classifier__kernel': ['linear', 'rbf']},
+    {'classifier': [SVC(max_iter=1000, random_state=Settings.random_state)],
+     'classifier__C': [1, 2],
+     'classifier__kernel': ['rbf', 'sigmoid']},
     {'classifier': [MLPClassifier(random_state=Settings.random_state)],
      'classifier__hidden_layer_sizes': [(50,), (100,), (50, 50)],
      'classifier__activation': ['tanh', 'relu'],
-     'classifier__learning_rate_init': [0.001, 0.01]},
+     'classifier__learning_rate_init': [0.01, 0.1]},
     {'classifier': [XGBClassifier(random_state=Settings.random_state, use_label_encoder=False)],
-     'classifier__n_estimators': [100, 200, 300],
-     'classifier__max_depth': [3, 6, 9],
-     'classifier__learning_rate': [0.01, 0.1, 0.3],
-     'classifier__subsample': [0.7, 0.9, 1],
-     'classifier__colsample_bytree': [0.7, 0.9, 1]},
+     'classifier__n_estimators': [100, 300],
+     'classifier__max_depth': [1, 2],
+     'classifier__learning_rate': [0.1, 0.3],
+     'classifier__subsample': [0.7, 1],
+     'classifier__colsample_bytree': [0.7, 1]},
 ]
 
 # Add Bagging and Boosting methods
@@ -66,13 +65,23 @@ param_grid += [
     {'classifier': [
         AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1, random_state=Settings.random_state),
                            random_state=Settings.random_state)],
-     'classifier__n_estimators': [50, 100, 200],
-     'classifier__learning_rate': [0.01, 0.1, 1]},
+        'classifier__n_estimators': [50, 100],
+        'classifier__learning_rate': [0.1, 1]},
     {'classifier': [GradientBoostingClassifier(random_state=Settings.random_state)],
-     'classifier__n_estimators': [100, 200, 300],
-     'classifier__learning_rate': [0.01, 0.1, 0.2],
-     'classifier__max_depth': [3, 5, 7]}
+     'classifier__n_estimators': [10, 100],
+     'classifier__learning_rate': [0.1, 0.3],
+     'classifier__max_depth': [3, 5]}
 ]
+
+# Define Scoring Metrics
+scoring = {
+    'accuracy': make_scorer(accuracy_score),
+    'precision': make_scorer(precision_score, average='weighted'),
+    'recall': make_scorer(recall_score, average='weighted'),
+    'f1_score': make_scorer(f1_score, average='macro'),
+    'roc_auc': 'roc_auc_ovr' if len(np.unique(y)) > 2 else 'roc_auc'  # Handle binary and multi-class
+}
+
 
 # Ensure the directory exists
 def ensure_dir(file_path):
@@ -105,23 +114,13 @@ for config in ModelConfig.configs:
     X = df_train.drop(columns=[ModelConfig.target_column])
     y = df_train[ModelConfig.target_column].str.strip()
 
-    # Define Scoring Metrics
-    scoring = {
-        'accuracy': make_scorer(accuracy_score),
-        'precision': make_scorer(precision_score, average='weighted'),
-        'recall': make_scorer(recall_score, average='weighted'),
-        'f1_score': make_scorer(f1_score, average='macro'),
-        'roc_auc': 'roc_auc_ovr' if len(np.unique(y)) > 2 else 'roc_auc'  # Handle binary and multi-class
-    }
-
-    # Split the data into training and validation sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ModelConfig.test_size,
-                                                        random_state=Settings.random_state)
-
     # Encode the target
     label_encoder = LabelEncoder()
-    y_train_encoded = label_encoder.fit_transform(y_train)
-    y_test_encoded = label_encoder.transform(y_test)  # Transform but do not fit to avoid leakage
+    y_encoded = label_encoder.fit_transform(y)
+
+    # Split the data into training and validation sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=ModelConfig.test_size,
+                                                        random_state=Settings.random_state)
 
     # Setting up preprocessing for numerical columns
     numerical_features = X_train.select_dtypes(include=[np.number]).columns.tolist()
@@ -134,9 +133,9 @@ for config in ModelConfig.configs:
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', numerical_pipeline, numerical_features),
-            #('drop', 'drop', ModelConfig.columns_to_drop)  # Explicitly dropping columns
+            # ('drop', 'drop', ModelConfig.columns_to_drop)  # Explicitly dropping columns
         ],
-        remainder='passthrough'  # Include other columns as is
+        remainder='passthrough'
     )
 
     # Creating the full pipeline
@@ -146,21 +145,20 @@ for config in ModelConfig.configs:
     ])
 
     # Create the GridSearchCV object
-    grid_search = GridSearchCV(pipeline, param_grid, cv=kf, scoring='accuracy', verbose=3, n_jobs=-1) # verbose=3 to have detailed output
+    grid_search = GridSearchCV(pipeline, param_grid, cv=kf, scoring='accuracy', verbose=3, n_jobs=-1)
 
     # Fit GridSearchCV
-    grid_search.fit(X_train, y_train_encoded)
+    grid_search.fit(X_train, y_train)
 
     # Use the best estimator for predictions
     best_pipeline = grid_search.best_estimator_
-    results = cross_validate(best_pipeline, X, y, cv=kf, scoring=scoring)
+    results = cross_validate(best_pipeline, X, y_encoded, cv=kf, scoring=scoring)
     # Evaluate the model (how it performs on unseen data)
     pprint(results)
 
     # Use best model and parameters to calculate confusion matrix
-    y_pred = best_pipeline.predict(X_test) # best_model = grid_search.best_estimator_
-    cm = confusion_matrix(y_test_encoded, y_pred)
-
+    y_pred = best_pipeline.predict(X_test)  # best_model = grid_search.best_estimator_
+    cm = confusion_matrix(y_test, y_pred)
 
     # Set up the matplotlib figure
     plt.figure(figsize=(8, 6))
@@ -176,7 +174,6 @@ for config in ModelConfig.configs:
     class_labels = label_encoder.classes_
     plt.xticks(np.arange(len(class_labels)) + 0.5, class_labels, rotation=45)
     plt.yticks(np.arange(len(class_labels)) + 0.5, class_labels, rotation=0)
-    plt.savefig(EvaluationConfig.heatmap_plot_path)
     heatmap_path = f"{config_nr}/{EvaluationConfig.heatmap_plot_path}"
     ensure_dir(heatmap_path)
     plt.savefig(heatmap_path)
@@ -244,13 +241,13 @@ for config in ModelConfig.configs:
     print("Best cross-validation score: {:.2f}".format(grid_search.best_score_))
 
     # Test accuracy
-    print("Test set score: {:.2f}".format(grid_search.score(X_test, y_test_encoded)))
+    print("Test set score: {:.2f}".format(grid_search.score(X_test, y_test)))
 
     # Prepare to plot ROC curves
     y_prob = best_pipeline.predict_proba(X_test)
-    if len(np.unique(y)) > 2:  # Multi-class case
+    if len(np.unique(y_encoded)) > 2:  # Multi-class case
         # We don't need this case.
-        y_test_binarized = label_binarize(y_test, classes=np.unique(y))
+        y_test_binarized = label_binarize(y_test, classes=np.unique(y_encoded))
         n_classes = y_test_binarized.shape[1]
         # Compute ROC curve and ROC area for each class
         fpr = dict()
@@ -264,7 +261,7 @@ for config in ModelConfig.configs:
             plt.plot(fpr[i], tpr[i], color=next(colors), lw=2,
                      label='ROC curve of class {0} (area = {1:0.2f})'.format(i, roc_auc[i]))
     else:  # Binary case
-        fpr, tpr, _ = roc_curve(y_test_encoded, y_prob[:, 1])
+        fpr, tpr, _ = roc_curve(y_test, y_prob[:, 1])
         roc_auc = auc(fpr, tpr)
         plt.plot(fpr, tpr, color='darkorange', lw=2,
                  label='ROC curve (area = {0:0.2f})'.format(roc_auc))
