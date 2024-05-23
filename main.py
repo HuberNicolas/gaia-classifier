@@ -73,15 +73,6 @@ param_grid += [
      'classifier__max_depth': [3, 5]}
 ]
 
-# Define Scoring Metrics
-scoring = {
-    'accuracy': make_scorer(accuracy_score),
-    'precision': make_scorer(precision_score, average='weighted'),
-    'recall': make_scorer(recall_score, average='weighted'),
-    'f1_score': make_scorer(f1_score, average='macro'),
-    'roc_auc': 'roc_auc_ovr' if len(np.unique(y)) > 2 else 'roc_auc'  # Handle binary and multi-class
-}
-
 
 # Ensure the directory exists
 def ensure_dir(file_path):
@@ -113,6 +104,15 @@ for config in ModelConfig.configs:
     # Separate features and target
     X = df_train.drop(columns=[ModelConfig.target_column])
     y = df_train[ModelConfig.target_column].str.strip()
+
+    # Define Scoring Metrics
+    scoring = {
+        'accuracy': make_scorer(accuracy_score),
+        'precision': make_scorer(precision_score, average='weighted'),
+        'recall': make_scorer(recall_score, average='weighted'),
+        'f1_score': make_scorer(f1_score, average='macro'),
+        'roc_auc': 'roc_auc_ovr' if len(np.unique(y)) > 2 else 'roc_auc'  # Handle binary and multi-class
+    }
 
     # Encode the target
     label_encoder = LabelEncoder()
