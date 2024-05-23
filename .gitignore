@@ -9,3 +9,5 @@ __pycache__
 
 # Data folder
 data
+evaluation
+importance

@@ -40,7 +40,7 @@ param_grid = [
     {'classifier': [KNeighborsClassifier()],
      'classifier__n_neighbors': [1, 3, 5],
      'classifier__weights': ['uniform', 'distance']},
-    {'classifier': [SVC(max_iter=1000, random_state=Settings.random_state)],
+    {'classifier': [SVC(max_iter=1000, probability=True, random_state=Settings.random_state)],
      'classifier__C': [1, 2],
      'classifier__kernel': ['rbf', 'sigmoid']},
     {'classifier': [MLPClassifier(random_state=Settings.random_state)],
@@ -120,6 +120,7 @@ for config in ModelConfig.configs:
 
     # Split the data into training and validation sets
     X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=ModelConfig.test_size,
+                                                        shuffle=True,
                                                         random_state=Settings.random_state)
 
     # Setting up preprocessing for numerical columns

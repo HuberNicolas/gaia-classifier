@@ -5,16 +5,16 @@ class DataConfig:
 
 
 class EvaluationConfig:
-    logfile_path = 'evaluation_old/grid_search_results.log'
-    best_configs_file = 'evaluation_old/best_configurations_per_model.log'
-    heatmap_plot_path = 'evaluation_old/heatmap_plot.png'
-    ROC_plot_path = 'evaluation_old/ROC_plot.png'
-    pipeline_path = 'evaluation_old/gaia_pipeline.joblib'
+    logfile_path = 'evaluation/grid_search_results.log'
+    best_configs_file = 'evaluation/best_configurations_per_model.log'
+    heatmap_plot_path = 'evaluation/heatmap_plot.png'
+    ROC_plot_path = 'evaluation/ROC_plot.png'
+    pipeline_path = 'evaluation/gaia_pipeline.joblib'
 
 
 class Settings:
     dev = True
-    sample_size = 0.001
+    sample_size = 0.50
     stratified_k_fold_n_splits = 5
     random_state = 31011997
 
