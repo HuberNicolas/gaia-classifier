@@ -1,0 +1,40 @@
+50% data
+
+Confusion Matrix:
+[[7948    0]
+ [ 467 6439]]
+
+
+ Confusion Matrix:
+[[7788  314]
+ [   1 6751]]
+
+
+ Confusion Matrix:
+[[8084   38]
+ [  31 6701]]
+
+
+ Confusion Matrix:
+[[8040   27]
+ [  22 6765]]
+
+
+
+ 100 % data
+
+ Confusion Matrix:
+[[15997     0]
+ [  849 12862]]
+
+ Confusion Matrix:
+[[15392   605]
+ [    0 13711]]
+
+ Confusion Matrix:
+[[15925    72]
+ [   47 13664]]
+
+ Confusion Matrix:
+[[15950    47]
+ [   35 13676]]

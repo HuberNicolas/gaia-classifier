@@ -13,7 +13,7 @@ class EvaluationConfig:
 
 
 class Settings:
-    dev = True
+    dev = False
     sample_size = 0.50
     stratified_k_fold_n_splits = 5
     random_state = 31011997
@@ -26,8 +26,6 @@ class ModelConfig:
                    'pmDE', 'Gmag', 'e_Gmag', 'BPmag', 'e_BPmag', 'RPmag', 'e_RPmag',
                    'GRVSmag', 'e_GRVSmag', 'BP-RP', 'BP-G', 'G-RP', 'pscol', 'Teff',
                    'Dist', 'Rad', 'Lum-Flame', 'Mass-Flame', 'Age-Flame', 'z-Flame']
-    columns_to_drop = ['ID', 'Unnamed: 0', 'Source']
-    columns_to_keep = ['Teff', 'GRVSmag', 'DE_ICRS']
     configs = [
         {
             'config_nr': 'evaluation/e_1_1f', 'importance': 0.031499201614265684,

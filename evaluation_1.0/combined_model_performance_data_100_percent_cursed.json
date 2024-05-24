@@ -1,0 +1,152 @@
+[
+    {
+        "model": "DecisionTreeClassifier",
+        "parameters": "{'classifier': DecisionTreeClassifier(random_state=31011997), 'classifier__max_depth': 10, 'classifier__min_samples_leaf': 10, 'classifier__min_samples_split': 2}",
+        "score": 0.97
+    },
+    {
+        "model": "LogisticRegression",
+        "parameters": "{'classifier': LogisticRegression(random_state=31011997), 'classifier__C': 0.1, 'classifier__solver': 'liblinear'}",
+        "score": 0.539
+    },
+    {
+        "model": "RandomForestClassifier",
+        "parameters": "{'classifier': RandomForestClassifier(random_state=31011997), 'classifier__max_features': 'sqrt', 'classifier__n_estimators': 200}",
+        "score": 0.944
+    },
+    {
+        "model": "KNeighborsClassifier",
+        "parameters": "{'classifier': KNeighborsClassifier(), 'classifier__n_neighbors': 5, 'classifier__weights': 'uniform'}",
+        "score": 0.969
+    },
+    {
+        "model": "SVC",
+        "parameters": "{'classifier': SVC(max_iter=1000, probability=True, random_state=31011997), 'classifier__C': 2, 'classifier__kernel': 'sigmoid'}",
+        "score": 0.741
+    },
+    {
+        "model": "MLPClassifier",
+        "parameters": "{'classifier': MLPClassifier(random_state=31011997), 'classifier__activation': 'tanh', 'classifier__hidden_layer_sizes': (50, 50), 'classifier__learning_rate_init': 0.01}",
+        "score": 0.969
+    },
+    {
+        "model": "XGBClassifier",
+        "parameters": "{'classifier': XGBClassifier(base_score=None, booster=None, callbacks=None,\n              colsample_bylevel=None, colsample_bynode=None,\n              colsample_bytree=None, device=None, early_stopping_rounds=None,\n              enable_categorical=False, eval_metric=None, feature_types=None,\n              gamma=None, grow_policy=None, importance_type=None,\n              interaction_constraints=None, learning_rate=None, max_bin=None,\n              max_cat_threshold=None, max_cat_to_onehot=None,\n              max_delta_step=None, max_depth=None, max_leaves=None,\n              min_child_weight=None, missing=nan, monotone_constraints=None,\n              multi_strategy=None, n_estimators=None, n_jobs=None,\n              num_parallel_tree=None, random_state=31011997, ...), 'classifier__colsample_bytree': 0.7, 'classifier__learning_rate': 0.1, 'classifier__max_depth': 1, 'classifier__n_estimators': 100, 'classifier__subsample': 0.7}",
+        "score": 0.967
+    },
+    {
+        "model": "BaggingClassifier",
+        "parameters": "{'classifier': BaggingClassifier(estimator=DecisionTreeClassifier(random_state=31011997),\n                  random_state=31011997), 'classifier__max_features': 0.5, 'classifier__max_samples': 0.5, 'classifier__n_estimators': 100}",
+        "score": 0.966
+    },
+    {
+        "model": "AdaBoostClassifier",
+        "parameters": "{'classifier': AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1,\n                                                    random_state=31011997),\n                   random_state=31011997), 'classifier__learning_rate': 0.1, 'classifier__n_estimators': 50}",
+        "score": 0.97
+    },
+    {
+        "model": "GradientBoostingClassifier",
+        "parameters": "{'classifier': GradientBoostingClassifier(random_state=31011997), 'classifier__learning_rate': 0.1, 'classifier__max_depth': 3, 'classifier__n_estimators': 10}",
+        "score": 0.97
+    },
+    {
+        "model": "DecisionTreeClassifier",
+        "parameters": "{'classifier': DecisionTreeClassifier(random_state=31011997), 'classifier__max_depth': 10, 'classifier__min_samples_leaf': 10, 'classifier__min_samples_split': 2}",
+        "score": 0.978
+    },
+    {
+        "model": "LogisticRegression",
+        "parameters": "{'classifier': LogisticRegression(random_state=31011997), 'classifier__C': 10, 'classifier__solver': 'liblinear'}",
+        "score": 0.976
+    },
+    {
+        "model": "RandomForestClassifier",
+        "parameters": "{'classifier': RandomForestClassifier(random_state=31011997), 'classifier__max_features': 'sqrt', 'classifier__n_estimators': 300}",
+        "score": 0.973
+    },
+    {
+        "model": "KNeighborsClassifier",
+        "parameters": "{'classifier': KNeighborsClassifier(), 'classifier__n_neighbors': 5, 'classifier__weights': 'uniform'}",
+        "score": 0.977
+    },
+    {
+        "model": "SVC",
+        "parameters": "{'classifier': SVC(max_iter=1000, probability=True, random_state=31011997), 'classifier__C': 1, 'classifier__kernel': 'sigmoid'}",
+        "score": 0.936
+    },
+    {
+        "model": "MLPClassifier",
+        "parameters": "{'classifier': MLPClassifier(random_state=31011997), 'classifier__activation': 'relu', 'classifier__hidden_layer_sizes': (50,), 'classifier__learning_rate_init': 0.01}",
+        "score": 0.978
+    },
+    {
+        "model": "XGBClassifier",
+        "parameters": "{'classifier': XGBClassifier(base_score=None, booster=None, callbacks=None,\n              colsample_bylevel=None, colsample_bynode=None,\n              colsample_bytree=None, device=None, early_stopping_rounds=None,\n              enable_categorical=False, eval_metric=None, feature_types=None,\n              gamma=None, grow_policy=None, importance_type=None,\n              interaction_constraints=None, learning_rate=None, max_bin=None,\n              max_cat_threshold=None, max_cat_to_onehot=None,\n              max_delta_step=None, max_depth=None, max_leaves=None,\n              min_child_weight=None, missing=nan, monotone_constraints=None,\n              multi_strategy=None, n_estimators=None, n_jobs=None,\n              num_parallel_tree=None, random_state=31011997, ...), 'classifier__colsample_bytree': 0.7, 'classifier__learning_rate': 0.1, 'classifier__max_depth': 1, 'classifier__n_estimators': 100, 'classifier__subsample': 0.7}",
+        "score": 0.977
+    },
+    {
+        "model": "BaggingClassifier",
+        "parameters": "{'classifier': BaggingClassifier(estimator=DecisionTreeClassifier(random_state=31011997),\n                  random_state=31011997), 'classifier__max_features': 0.5, 'classifier__max_samples': 0.5, 'classifier__n_estimators': 100}",
+        "score": 0.976
+    },
+    {
+        "model": "AdaBoostClassifier",
+        "parameters": "{'classifier': AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1,\n                                                    random_state=31011997),\n                   random_state=31011997), 'classifier__learning_rate': 0.1, 'classifier__n_estimators': 50}",
+        "score": 0.978
+    },
+    {
+        "model": "GradientBoostingClassifier",
+        "parameters": "{'classifier': GradientBoostingClassifier(random_state=31011997), 'classifier__learning_rate': 0.1, 'classifier__max_depth': 3, 'classifier__n_estimators': 10}",
+        "score": 0.978
+    },
+    {
+        "model": "DecisionTreeClassifier",
+        "parameters": "{'classifier': DecisionTreeClassifier(random_state=31011997), 'classifier__max_depth': 10, 'classifier__min_samples_leaf': 10, 'classifier__min_samples_split': 2}",
+        "score": 0.978
+    },
+    {
+        "model": "LogisticRegression",
+        "parameters": "{'classifier': LogisticRegression(random_state=31011997), 'classifier__C': 10, 'classifier__solver': 'liblinear'}",
+        "score": 0.976
+    },
+    {
+        "model": "RandomForestClassifier",
+        "parameters": "{'classifier': RandomForestClassifier(random_state=31011997), 'classifier__max_features': 'sqrt', 'classifier__n_estimators': 300}",
+        "score": 0.973
+    },
+    {
+        "model": "KNeighborsClassifier",
+        "parameters": "{'classifier': KNeighborsClassifier(), 'classifier__n_neighbors': 5, 'classifier__weights': 'uniform'}",
+        "score": 0.977
+    },
+    {
+        "model": "SVC",
+        "parameters": "{'classifier': SVC(max_iter=1000, probability=True, random_state=31011997), 'classifier__C': 1, 'classifier__kernel': 'sigmoid'}",
+        "score": 0.936
+    },
+    {
+        "model": "MLPClassifier",
+        "parameters": "{'classifier': MLPClassifier(random_state=31011997), 'classifier__activation': 'relu', 'classifier__hidden_layer_sizes': (50,), 'classifier__learning_rate_init': 0.01}",
+        "score": 0.978
+    },
+    {
+        "model": "XGBClassifier",
+        "parameters": "{'classifier': XGBClassifier(base_score=None, booster=None, callbacks=None,\n              colsample_bylevel=None, colsample_bynode=None,\n              colsample_bytree=None, device=None, early_stopping_rounds=None,\n              enable_categorical=False, eval_metric=None, feature_types=None,\n              gamma=None, grow_policy=None, importance_type=None,\n              interaction_constraints=None, learning_rate=None, max_bin=None,\n              max_cat_threshold=None, max_cat_to_onehot=None,\n              max_delta_step=None, max_depth=None, max_leaves=None,\n              min_child_weight=None, missing=nan, monotone_constraints=None,\n              multi_strategy=None, n_estimators=None, n_jobs=None,\n              num_parallel_tree=None, random_state=31011997, ...), 'classifier__colsample_bytree': 0.7, 'classifier__learning_rate': 0.1, 'classifier__max_depth': 1, 'classifier__n_estimators': 100, 'classifier__subsample': 0.7}",
+        "score": 0.977
+    },
+    {
+        "model": "BaggingClassifier",
+        "parameters": "{'classifier': BaggingClassifier(estimator=DecisionTreeClassifier(random_state=31011997),\n                  random_state=31011997), 'classifier__max_features': 0.5, 'classifier__max_samples': 0.5, 'classifier__n_estimators': 100}",
+        "score": 0.976
+    },
+    {
+        "model": "AdaBoostClassifier",
+        "parameters": "{'classifier': AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1,\n                                                    random_state=31011997),\n                   random_state=31011997), 'classifier__learning_rate': 0.1, 'classifier__n_estimators': 50}",
+        "score": 0.978
+    },
+    {
+        "model": "GradientBoostingClassifier",
+        "parameters": "{'classifier': GradientBoostingClassifier(random_state=31011997), 'classifier__learning_rate': 0.1, 'classifier__max_depth': 3, 'classifier__n_estimators': 10}",
+        "score": 0.978
+    }
+]
