@@ -1,0 +1,16 @@
+{'fit_time': array([0.21048379, 0.18621731, 0.20290136, 0.18517828, 0.19108796]),
+ 'score_time': array([0.07255983, 0.05695677, 0.07234168, 0.06571794, 0.06173396]),
+ 'test_accuracy': array([0.97115255, 0.96903191, 0.97034469, 0.96983876, 0.97152186]),
+ 'test_f1_score': array([0.97081712, 0.96865726, 0.96999503, 0.96947996, 0.97119448]),
+ 'test_precision': array([0.97261757, 0.97071397, 0.97188333, 0.9714291 , 0.97292932]),
+ 'test_recall': array([0.97115255, 0.96903191, 0.97034469, 0.96983876, 0.97152186]),
+ 'test_roc_auc': array([0.97555522, 0.97339861, 0.97591951, 0.97423779, 0.97583643])}
+Heat map plot saved as 'evaluation/e_1_1f/evaluation/heatmap_plot.png'.
+Pipeline has been saved to evaluation/e_1_1f/evaluation/gaia_pipeline.joblib
+GridSearchCV results have been saved to evaluation/grid_search_results.log
+Best configurations have been saved to evaluation/e_1_1f/evaluation/best_configurations_per_model.log
+Best parameters overall: {'classifier': DecisionTreeClassifier(random_state=31011997), 'classifier__max_depth': 10, 'classifier__min_samples_leaf': 10, 'classifier__min_samples_split': 2}
+Best cross-validation score: 0.97
+Test set score: 0.97
+ROC curves plot saved as 'evaluation/e_1_1f/evaluation/ROC_plot.png'.
+Submission file created successfully!

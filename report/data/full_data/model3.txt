@@ -1,0 +1,26 @@
+{'fit_time': array([1.58523512, 1.59728312, 1.63837695, 1.55544114, 1.75415611]),
+ 'score_time': array([0.1133759 , 0.10959697, 0.10069132, 0.10628891, 0.11072707]),
+ 'test_accuracy': array([0.99656658, 0.99609533, 0.99626363, 0.99535463, 0.99569125]),
+ 'test_f1_score': array([0.99654595, 0.99607141, 0.99624112, 0.99532713, 0.99566502]),
+ 'test_precision': array([0.99656948, 0.99609576, 0.99626611, 0.99536102, 0.9956922 ]),
+ 'test_recall': array([0.99656658, 0.99609533, 0.99626363, 0.99535463, 0.99569125]),
+ 'test_roc_auc': array([0.99995296, 0.99994117, 0.99994962, 0.9999232 , 0.99993126])}
+Heat map plot saved as 'evaluation/e_3_5f/evaluation/heatmap_plot.png'.
+Pipeline has been saved to evaluation/e_3_5f/evaluation/gaia_pipeline.joblib
+GridSearchCV results have been saved to evaluation/grid_search_results.log
+Best configurations have been saved to evaluation/e_3_5f/evaluation/best_configurations_per_model.log
+Best parameters overall: {'classifier': XGBClassifier(base_score=None, booster=None, callbacks=None,
+              colsample_bylevel=None, colsample_bynode=None,
+              colsample_bytree=None, device=None, early_stopping_rounds=None,
+              enable_categorical=False, eval_metric=None, feature_types=None,
+              gamma=None, grow_policy=None, importance_type=None,
+              interaction_constraints=None, learning_rate=None, max_bin=None,
+              max_cat_threshold=None, max_cat_to_onehot=None,
+              max_delta_step=None, max_depth=None, max_leaves=None,
+              min_child_weight=None, missing=nan, monotone_constraints=None,
+              multi_strategy=None, n_estimators=None, n_jobs=None,
+              num_parallel_tree=None, random_state=31011997, ...), 'classifier__colsample_bytree': 1, 'classifier__learning_rate': 0.1, 'classifier__max_depth': 2, 'classifier__n_estimators': 300, 'classifier__subsample': 0.7}
+Best cross-validation score: 1.00
+Test set score: 1.00
+ROC curves plot saved as 'evaluation/e_3_5f/evaluation/ROC_plot.png'.
+Submission file created successfully!

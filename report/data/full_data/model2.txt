@@ -1,0 +1,18 @@
+{'fit_time': array([1.79535794, 1.95370817, 1.90874195, 1.84760618, 1.87080216]),
+ 'score_time': array([0.25443506, 0.24525976, 0.23283195, 0.19249105, 0.22296309]),
+ 'test_accuracy': array([0.97828868, 0.97936583, 0.97899556, 0.97778301, 0.9785909 ]),
+ 'test_f1_score': array([0.97821877, 0.97929683, 0.97892622, 0.97771283, 0.97852131]),
+ 'test_precision': array([0.97926557, 0.98025017, 0.97991122, 0.97880484, 0.97954136]),
+ 'test_recall': array([0.97828868, 0.97936583, 0.97899556, 0.97778301, 0.9785909 ]),
+ 'test_roc_auc': array([0.99271447, 0.99295665, 0.9927487 , 0.99228004, 0.99212769])}
+Heat map plot saved as 'evaluation/e_2_1f/evaluation/heatmap_plot.png'.
+Pipeline has been saved to evaluation/e_2_1f/evaluation/gaia_pipeline.joblib
+GridSearchCV results have been saved to evaluation/grid_search_results.log
+Best configurations have been saved to evaluation/e_2_1f/evaluation/best_configurations_per_model.log
+Best parameters overall: {'classifier': AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1,
+                                                    random_state=31011997),
+                   random_state=31011997), 'classifier__learning_rate': 0.1, 'classifier__n_estimators': 50}
+Best cross-validation score: 0.98
+Test set score: 0.98
+ROC curves plot saved as 'evaluation/e_2_1f/evaluation/ROC_plot.png'.
+Submission file created successfully!

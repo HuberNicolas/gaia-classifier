@@ -8,6 +8,3 @@ __pycache__
 .DS_Store
 
 # Data folder
-data
-evaluation
-importance

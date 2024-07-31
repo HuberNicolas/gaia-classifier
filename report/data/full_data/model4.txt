@@ -1,0 +1,26 @@
+{'fit_time': array([2.55478716, 2.60799074, 2.58226204, 2.62201905, 2.55814791]),
+ 'score_time': array([0.14720988, 0.14160705, 0.14179301, 0.14341092, 0.14370584]),
+ 'test_accuracy': array([0.99777838, 0.99720614, 0.99764373, 0.99686942, 0.99730703]),
+ 'test_f1_score': array([0.99776465, 0.99718907, 0.9976294 , 0.99685038, 0.99729058]),
+ 'test_precision': array([0.99777838, 0.99720672, 0.99764469, 0.99687036, 0.99730753]),
+ 'test_recall': array([0.99777838, 0.99720614, 0.99764373, 0.99686942, 0.99730703]),
+ 'test_roc_auc': array([0.99997798, 0.99997385, 0.99998076, 0.99996393, 0.99996946])}
+Heat map plot saved as 'evaluation/e_4_25f/evaluation/heatmap_plot.png'.
+Pipeline has been saved to evaluation/e_4_25f/evaluation/gaia_pipeline.joblib
+GridSearchCV results have been saved to evaluation/grid_search_results.log
+Best configurations have been saved to evaluation/e_4_25f/evaluation/best_configurations_per_model.log
+Best parameters overall: {'classifier': XGBClassifier(base_score=None, booster=None, callbacks=None,
+              colsample_bylevel=None, colsample_bynode=None,
+              colsample_bytree=None, device=None, early_stopping_rounds=None,
+              enable_categorical=False, eval_metric=None, feature_types=None,
+              gamma=None, grow_policy=None, importance_type=None,
+              interaction_constraints=None, learning_rate=None, max_bin=None,
+              max_cat_threshold=None, max_cat_to_onehot=None,
+              max_delta_step=None, max_depth=None, max_leaves=None,
+              min_child_weight=None, missing=nan, monotone_constraints=None,
+              multi_strategy=None, n_estimators=None, n_jobs=None,
+              num_parallel_tree=None, random_state=31011997, ...), 'classifier__colsample_bytree': 0.7, 'classifier__learning_rate': 0.3, 'classifier__max_depth': 2, 'classifier__n_estimators': 300, 'classifier__subsample': 1}
+Best cross-validation score: 1.00
+Test set score: 1.00
+ROC curves plot saved as 'evaluation/e_4_25f/evaluation/ROC_plot.png'.
+Submission file created successfully!
